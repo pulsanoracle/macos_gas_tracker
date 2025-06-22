@@ -91,10 +91,6 @@ open dist/
 - More reliable service during high traffic
 - Priority access to Etherscan data
 
-### Auto-startup
-1. Click menu bar icon → "Auto-start Settings"
-2. Launches silently at login (no Terminal window)
-3. Only works with the packaged app version
 
 ## Menu Options
 
