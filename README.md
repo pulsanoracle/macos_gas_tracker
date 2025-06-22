@@ -72,11 +72,72 @@ python3 gas.py
 # Install PyInstaller
 pip install pyinstaller
 
-# Build the app
+# Option 1: Quick build (creates executable)
 pyinstaller --onefile --windowed --name "Crypto Fee Tracker" gas.py
+
+# Option 2: Recommended - Proper macOS app bundle (no dock icon)
+# Create gas.spec file first (see below), then:
+pyinstaller gas.spec
 
 # Find your app in dist/
 open dist/
+```
+
+**Create gas.spec file for proper macOS app:**
+```python
+# gas.spec
+block_cipher = None
+
+a = Analysis(
+    ['gas.py'],
+    pathex=[],
+    binaries=[],
+    datas=[],
+    hiddenimports=[],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='Crypto Fee Tracker',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+)
+
+app = BUNDLE(
+    exe,
+    name='Crypto Fee Tracker.app',
+    icon=None,
+    bundle_identifier='com.pulsanoracle.cryptofeetracker',
+    info_plist={
+        'LSUIElement': True,  # Hides from dock - menu bar only
+        'NSHighResolutionCapable': True,
+    },
+)
 ```
 
 ## Configuration
@@ -91,6 +152,10 @@ open dist/
 - More reliable service during high traffic
 - Priority access to Etherscan data
 
+### Auto-startup
+1. Click menu bar icon → "Auto-start Settings"
+2. Launches silently at login (no Terminal window)
+3. Only works with the packaged app version
 
 ## Menu Options
 
@@ -112,12 +177,14 @@ open dist/
 - Python 3
 - [rumps](https://github.com/jaredks/rumps) - macOS menu bar framework
 - [requests](https://docs.python-requests.org/) - HTTP library
+- PyInstaller - App packaging with proper macOS bundle support
 
 **Architecture:**
 - Background thread for API updates
 - 30-second refresh interval
 - Graceful error handling with automatic retry
 - Persistent configuration storage
+- True menu bar-only app (LSUIElement) - no dock icon
 
 ## Troubleshooting
 
@@ -128,7 +195,12 @@ open dist/
 ### No prices showing
 - Check your internet connection
 - Verify API services are accessible
-- Look for error messages in the menu bar
+- Look for error messages in the menu bar (Ξ or ₿ with error text)
+
+### App shows in dock
+- Use the `gas.spec` file approach instead of direct PyInstaller command
+- The spec file creates a proper app bundle with `LSUIElement: True`
+- This ensures true menu bar-only behavior
 
 ### Auto-start not working
 - Only works with the packaged .app version
