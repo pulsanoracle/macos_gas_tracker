@@ -12,14 +12,6 @@ class EthGasPriceApp(rumps.App):
     def __init__(self):
         super(EthGasPriceApp, self).__init__("Loading...")
         
-        # Hide from Dock - make it menu bar only
-        try:
-            import AppKit
-            if AppKit.NSApp:
-                AppKit.NSApp.setActivationPolicy_(AppKit.NSApplicationActivationPolicyAccessory)
-        except (ImportError, AttributeError):
-            pass  # Not on macOS or AppKit not available
-        
         self.title = "Loading..."
         self.eth_base_url = "https://api.etherscan.io/v2/api"
         self.btc_base_url = "https://api.blocknative.com/gasprices/blockprices"
@@ -27,9 +19,21 @@ class EthGasPriceApp(rumps.App):
         self.api_key = self.load_api_key()
         self.current_chain = self.load_chain_selection()
         
+        # Hide from dock after a short delay
+        threading.Timer(0.1, self.hide_from_dock).start()
+        
         # Start the background update thread
         self.update_thread = threading.Thread(target=self.update_loop, daemon=True)
         self.update_thread.start()
+    
+    def hide_from_dock(self):
+        """Hide the app from dock - called after a short delay"""
+        try:
+            import AppKit
+            if AppKit.NSApp:
+                AppKit.NSApp.setActivationPolicy_(AppKit.NSApplicationActivationPolicyAccessory)
+        except (ImportError, AttributeError):
+            pass  # Not on macOS or AppKit not available
     
     def load_api_key(self):
         """Load API key from config file"""
