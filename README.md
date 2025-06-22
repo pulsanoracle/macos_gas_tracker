@@ -45,7 +45,7 @@ A lightweight macOS menu bar application that displays real-time cryptocurrency 
 
 ### Option 1: Download Pre-built App
 1. Download the latest release from [Releases](https://github.com/pulsanoracle/macos_gas_tracker/releases)
-2. Unzip and move `Crypto Fee Tracker.app` to your Applications folder
+2. Unzip `Gas.Price.Tracker.zip` and move `Gas Price Tracker.app` to your Applications folder
 3. Right-click → Open (first time only for security)
 
 ### Option 2: Build from Source
